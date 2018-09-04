@@ -10,6 +10,32 @@ $botman->hears('Hi', function ($bot) {
 $botman->hears('Start conversation', BotManController::class.'@startConversation');
 */
 
+// Inicio
+//////////////////////////////////////////////////////////////////////////////
+
+$botman->hears('/start', function ($bot) {
+
+    // Obtener la información del usuario en sesión
+    $user = $bot->getUser();
+    $id = $user->getId();
+    $username = $user->getUsername() ?: "desconocido";
+    $firstname = $user->getFirstName() ?: "desconocido";
+    $lastname = $user->getLastName() ?: "desconocido";
+
+    // Crear o actualizar la información del usuario en sesión
+    $cliente = \App\Cliente::firstOrNew(array(
+        'codigo' => $id,
+        'nombre_usuario' => $username,
+        'nombres' => $firstname,
+        'apellidos' => $lastname
+    ));
+    // $cliente->foo = Input::get('foo');
+    $cliente->save();
+
+    // Mostrar mensaje de bienvenida
+    $bot->reply("Hola $firstname, soy el asistente para la creación de citas.");
+});
+
 // Servicios
 //////////////////////////////////////////////////////////////////////////////
 
