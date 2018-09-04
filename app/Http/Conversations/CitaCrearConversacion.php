@@ -154,6 +154,25 @@ class CitaCrearConversacion extends Conversation
 
     public function registrarCita()
     {
-        // todo
+        // Identificar al usuario en sesión
+        $id = $this->bot->getUser()->getId();
+        $cliente = \App\Cliente::where('codigo', $id)->first();
+
+        if($cliente == null)
+        {
+            $this->say("Lo siento, no pude registrar la cita debido a que no conozco al cliente: ". $id); 
+            return;
+        }
+
+        // Preparar la fecha de la cita a registrar
+        $moment = \DateTime::createFromFormat('d/m/Y h:i', $this->fecha . ' ' . $this->hora);
+        // $moment->format('Y-m-d')
+
+        // Registra la cita
+        $control = \App\Cita::create([
+            'cliente_id' => $cliente->id,
+            'servicio_id' => $this->servicio,
+            'fecha' => $moment
+        ]);
     }
 }
