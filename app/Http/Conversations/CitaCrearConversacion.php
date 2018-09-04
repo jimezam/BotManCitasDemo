@@ -3,6 +3,8 @@
 namespace App\Http\Conversations;
 
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 
 use BotMan\BotMan\Messages\Conversations\Conversation;
 
@@ -85,5 +87,35 @@ class CitaCrearConversacion extends Conversation
         // 24h: preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/", $cadena)
 
         return preg_match("/^(?:1[012]|0[0-9]):[0-5][0-9]$/", $cadena);
+    }
+
+    public function preguntarServicio()
+    {
+        $servicios = \App\Servicio::orderBy('nombre', 'asc')->get();
+
+        $botones = [];
+
+        foreach($servicios as $servicio)
+        {
+            $botones[] = Button::create($servicio->nombre)->value($servicio->id);
+        }
+
+        $cualServicio = Question::create('¿Qué servicio deseas agendar?')
+            ->addButtons($botones);
+
+        $this->ask($cualServicio, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) 
+            {
+                $this->servicio = $answer->getValue();
+                $nombreServicio = \App\Servicio::find($this->servicio)->nombre;
+
+                $this->confirmar();
+            } 
+            else 
+            {
+                $this->say('Por favor elige un servicio de la lista.');
+                $this->preguntarServicio();
+            }
+        });
     }
 }
