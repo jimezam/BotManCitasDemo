@@ -14,4 +14,12 @@ class Cliente extends Model
     protected $fillable = [
         'codigo', 'nombre_usuario', 'nombres', 'apellidos'
     ];
+
+    /**
+     * Obtiene las citas creadas por un cliente
+     */
+    public function citas()
+    {
+        return $this->hasMany('App\Cita');
+    }
 }
