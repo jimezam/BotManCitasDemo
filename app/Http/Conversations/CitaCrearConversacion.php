@@ -30,6 +30,7 @@ class CitaCrearConversacion extends Conversation
         {   
             if($this->validarFecha($answer->getText()))
             {
+                $this->fecha = $answer->getText();
                 $this->preguntarHora();
             }
             else
@@ -60,5 +61,29 @@ class CitaCrearConversacion extends Conversation
             return false;
 
         return true;
+    }
+
+    public function preguntarHora()
+    {
+        $this->ask("¿Para qué hora deseas la cita? \n(hh:mm)", function (Answer $answer) 
+        { 
+            if($this->validarHora($answer->getText()))
+            {
+                $this->hora = $answer->getText();
+                $this->preguntarServicio();
+            }
+            else
+            {
+                $this->say("Esa hora parece ser incorrecta, por favor verifícala.");
+                $this->preguntarHora();
+            }
+        });
+    }
+
+    private function validarHora($cadena)
+    {
+        // 24h: preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/", $cadena)
+
+        return preg_match("/^(?:1[012]|0[0-9]):[0-5][0-9]$/", $cadena);
     }
 }
