@@ -39,7 +39,7 @@ $botman->hears('/start', function ($bot) {
 // Servicios
 //////////////////////////////////////////////////////////////////////////////
 
-$botman->hears('Ver servicios', function ($bot) {
+$botman->hears('Ver servicios|Servicios', function ($bot) {
     $bot->reply("Los servicios actuales son:");
 
     // Obtener los servicios almacenados en la base de datos
@@ -82,10 +82,56 @@ $bot->reply($date);
 // (realizar)
 */
 
-// Crear una nueva cita (proceso completo)
+// Crear una nueva cita
 
 $botman->hears('Deseo agendar una cita|Nueva cita|Crear cita', function($bot) {
     $bot->startConversation(new App\Http\Conversations\CitaCrearConversacion);
+});
+
+// Listar las citas del cliente en sesión
+
+$botman->hears('Listar mis citas|Listar citas|citas', function ($bot) {
+    
+    // Identificar al usuario en sesión dentro del sistema de mensajería
+    $user = $bot->getUser();
+    $id = $user->getId();
+
+    // Indentificar la información del usuario como cliente
+    $cliente = \App\Cliente::where('codigo', $id)->first();
+
+    if($cliente == null)
+    {
+        $this->say("Lo siento, no pude buscar las citas debido a que no conozco al cliente: ". $id); 
+        return;
+    }
+
+    // Identificar las citas pendientes del cliente
+    $citas = \App\Cita::where('cliente_id', $cliente->id)
+                ->whereDate('fecha', '>=', new \DateTime())
+                ->orderBy('fecha', 'asc')
+                ->get();
+    
+    // Listar las citas encontradas
+    $bot->reply("Las citas que tienes pendientes son las siguientes:");
+
+    foreach($citas as $cita)
+    {
+        // Obtener la información del servicio asociado
+        $servicio = \App\Servicio::find($cita->servicio_id);
+        $servicioNombre = "desconocido";
+
+        if($servicio != null)
+            $servicioNombre = $servicio->nombre;
+
+        $momento = new \DateTime($cita->fecha);
+
+        // Preparar el mensaje que se mostrará por cada cita
+        $textoCita = "En " . $momento->format('d/m/Y') . 
+                     " a las " . $momento->format('h:i') .
+                     " para " . $servicioNombre;
+
+        $bot->reply($textoCita);
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////

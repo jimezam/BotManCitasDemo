@@ -58,6 +58,12 @@ class CitaCrearConversacion extends Conversation
         if(!$control)
             return false;
 
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+/****************************************************************************/
+
         // Verificar que sea una fecha futura
         if (new \DateTime() >= new \DateTime("$partes[1]-$partes[0]-$partes[2]"))
             return false;
@@ -91,8 +97,10 @@ class CitaCrearConversacion extends Conversation
 
     public function preguntarServicio()
     {
+        // Consultar los servicios disponibles en la base de datos
         $servicios = \App\Servicio::orderBy('nombre', 'asc')->get();
 
+        // Preparar los botones de acuerdo con los servicios existentes
         $botones = [];
 
         foreach($servicios as $servicio)
@@ -100,10 +108,14 @@ class CitaCrearConversacion extends Conversation
             $botones[] = Button::create($servicio->nombre)->value($servicio->id);
         }
 
+        // Crear la "pregunta"
         $cualServicio = Question::create('¿Qué servicio deseas agendar?')
             ->addButtons($botones);
 
+        // Presentar la pregunta al usuario
         $this->ask($cualServicio, function (Answer $answer) {
+            // Si el usuario utilizó los botones para responder ...
+
             if ($answer->isInteractiveMessageReply()) 
             {
                 $this->servicio = $answer->getValue();
@@ -113,6 +125,8 @@ class CitaCrearConversacion extends Conversation
             } 
             else 
             {
+                // Si el usuario digitó su respuesta como texto
+
                 $this->say('Por favor elige un servicio de la lista.');
                 $this->preguntarServicio();
             }
@@ -165,14 +179,14 @@ class CitaCrearConversacion extends Conversation
         }
 
         // Preparar la fecha de la cita a registrar
-        $moment = \DateTime::createFromFormat('d/m/Y h:i', $this->fecha . ' ' . $this->hora);
-        // $moment->format('Y-m-d')
+        $momento = \DateTime::createFromFormat('d/m/Y h:i', $this->fecha . ' ' . $this->hora);
+        // $momento->format('Y-m-d')
 
         // Registra la cita
         $control = \App\Cita::create([
             'cliente_id' => $cliente->id,
             'servicio_id' => $this->servicio,
-            'fecha' => $moment
+            'fecha' => $momento
         ]);
     }
 }
