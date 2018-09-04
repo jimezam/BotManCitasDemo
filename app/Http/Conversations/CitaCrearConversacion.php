@@ -107,7 +107,7 @@ class CitaCrearConversacion extends Conversation
             if ($answer->isInteractiveMessageReply()) 
             {
                 $this->servicio = $answer->getValue();
-                $nombreServicio = \App\Servicio::find($this->servicio)->nombre;
+                $this->nombreServicio = \App\Servicio::find($this->servicio)->nombre;
 
                 $this->confirmar();
             } 
@@ -117,5 +117,43 @@ class CitaCrearConversacion extends Conversation
                 $this->preguntarServicio();
             }
         });
+    }
+
+    public function confirmar()
+    {
+        $this->say("En " . $this->fecha . "\n\r".
+                   " a las " . $this->hora .
+                   " para " . $this->nombreServicio);
+    
+        $confirmacion = Question::create('¿Estás seguro de que deseas agendar esta cita?')
+            ->addButtons([
+                Button::create('Agendar')->value('si'),
+                Button::create('Cancelar')->value('no')
+            ]);
+
+        $this->ask($confirmacion, function (Answer $answer) {
+            if ($answer->isInteractiveMessageReply()) {
+                $opcion = $answer->getValue();
+                
+                if($opcion == "si")
+                {
+                    $this->say('Entendido, voy a registrar la reserva.');
+                    $this->registrarCita();
+                }
+
+                if($opcion == "no")
+                {
+                    $this->say('Entendido, cancelaré la solicitud.');
+                }
+            } else {
+                $this->say('Por favor elige una opción de la lista.');
+                $this->confirmar();
+            }
+        });
+    }
+
+    public function registrarCita()
+    {
+        // todo
     }
 }
