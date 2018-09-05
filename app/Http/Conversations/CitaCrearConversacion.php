@@ -33,7 +33,8 @@ class CitaCrearConversacion extends Conversation
             if($this->validarFecha($answer->getText()))
             {
                 $this->fecha = $answer->getText();
-                $this->preguntarHora();
+// $this->preguntarHora();
+$this->say("BIEN");
             }
             else
             {
@@ -58,14 +59,11 @@ class CitaCrearConversacion extends Conversation
         if(!$control)
             return false;
 
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
+        $ahora = time();
+        $fecha = mktime(23, 59, 59, intval($partes[1]), intval($partes[0]), intval($partes[2]));
 
         // Verificar que sea una fecha futura
-        if (new \DateTime() >= new \DateTime("$partes[1]-$partes[0]-$partes[2]"))
+        if ($fecha < $ahora)
             return false;
 
         return true;
