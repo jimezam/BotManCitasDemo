@@ -33,8 +33,7 @@ class CitaCrearConversacion extends Conversation
             if($this->validarFecha($answer->getText()))
             {
                 $this->fecha = $answer->getText();
-// $this->preguntarHora();
-$this->say("BIEN");
+                $this->preguntarHora();
             }
             else
             {
