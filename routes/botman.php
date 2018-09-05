@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\BotManController;
 
 $botman = resolve('botman');
@@ -10,8 +11,15 @@ $botman->hears('Hi', function ($bot) {
 $botman->hears('Start conversation', BotManController::class.'@startConversation');
 */
 
+/*
+$botman->middleware->received(new \App\Logger());
+$botman->middleware->heard(new \App\Logger());
+*/
+
 // Inicio
 //////////////////////////////////////////////////////////////////////////////
+
+// Inicia una charla con el bot de citas
 
 $botman->hears('/start', function ($bot) {
 
@@ -39,6 +47,8 @@ $botman->hears('/start', function ($bot) {
 // Servicios
 //////////////////////////////////////////////////////////////////////////////
 
+// Lista los servicios actuales
+
 $botman->hears('Ver servicios|Servicios', function ($bot) {
     $bot->reply("Los servicios actuales son:");
 
@@ -50,6 +60,12 @@ $botman->hears('Ver servicios|Servicios', function ($bot) {
     {
         $bot->reply($servicio->nombre." (".$servicio->id.")");
     }
+});
+
+// Agrega un nuevo servicio
+
+$botman->hears('Nuevo servicio|Crear servicio', function($bot) {
+    $bot->startConversation(new App\Http\Conversations\ServicioAgregarConversacion);
 });
 
 // Citas
