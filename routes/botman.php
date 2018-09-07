@@ -108,19 +108,14 @@ $botman->hears('Listar mis citas|Listar citas|citas', function ($bot) {
 
     foreach($citas as $cita)
     {
-        // Obtener la información del servicio asociado
-        $servicio = \App\Servicio::find($cita->servicio_id);
-        $servicioNombre = "desconocido";
-
-        if($servicio != null)
-            $servicioNombre = $servicio->nombre;
-
         $momento = new \DateTime($cita->fecha);
+
+        $servicio = $cita->servicio->nombre;
 
         // Preparar el mensaje que se mostrará por cada cita
         $textoCita = "En " . $momento->format('d/m/Y') . 
                      " a las " . $momento->format('h:i') .
-                     " para " . $servicioNombre;
+                     " para " . $servicio;
 
         $bot->reply($textoCita);
     }
