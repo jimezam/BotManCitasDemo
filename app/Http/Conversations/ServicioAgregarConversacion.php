@@ -16,8 +16,15 @@ class ServicioAgregarConversacion extends Conversation
      */
     public function run()
     {
+        /*
         $this->saludo();
         $this->preguntarNombre();
+        */
+
+        $this->say("Testing ...");
+        // $this->say("hola", ["445956852", "600357848"], TelegramDriver::class);
+        $this->say("hola", "445956852", TelegramDriver::class);
+        $this->say("hola", "600357848", TelegramDriver::class);
     }
     
     public function saludo()
@@ -72,7 +79,7 @@ class ServicioAgregarConversacion extends Conversation
         foreach($clientes as $cliente)
         {
             $this->say($mensaje, 
-                        $cliente->codigo, 
+                        [$cliente->codigo], 
                         TelegramDriver::class);
         }
     }

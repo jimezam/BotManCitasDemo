@@ -14,6 +14,7 @@ $botman->hears('Start conversation', BotManController::class.'@startConversation
 /*
 $botman->middleware->received(new \App\Logger());
 $botman->middleware->heard(new \App\Logger());
+sending, received, and heard.
 */
 
 // Inicio
@@ -26,6 +27,7 @@ $botman->hears('/start', function ($bot) {
     // Obtener la información del usuario en sesión
     $user = $bot->getUser();
     $id = $user->getId();
+    $driver = $bot->getDriver()->getName();
     $username = $user->getUsername() ?: "desconocido";
     $firstname = $user->getFirstName() ?: "desconocido";
     $lastname = $user->getLastName() ?: "desconocido";
@@ -33,6 +35,7 @@ $botman->hears('/start', function ($bot) {
     // Crear o actualizar la información del usuario en sesión
     $cliente = \App\Cliente::firstOrNew(array(
         'codigo' => $id,
+        'driver' => $driver,
         'nombre_usuario' => $username,
         'nombres' => $firstname,
         'apellidos' => $lastname
