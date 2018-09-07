@@ -63,6 +63,11 @@ $botman->hears('Ver servicios|Servicios', function ($bot) {
     {
         $bot->reply($servicio->nombre." (".$servicio->id.")");
     }
+
+    if(count($servicios) == 0)
+    {
+        $bot->reply("Ups, no tengo servicios disponibles.");
+    }
 });
 
 // Agrega un nuevo servicio
@@ -118,6 +123,11 @@ $botman->hears('Listar mis citas|Listar citas|citas', function ($bot) {
                      " para " . $servicio;
 
         $bot->reply($textoCita);
+    }
+
+    if(count($citas) == 0)
+    {
+        $bot->reply("Ups, no tienes citas pendientes.");
     }
 });
 
