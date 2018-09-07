@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BotManController;
 
+// use Mpociot\Botman\Drivers\TelegramDriver;
+
 $botman = resolve('botman');
 
 /*
@@ -17,6 +19,20 @@ $botman->middleware->heard(new \App\Logger());
 sending, received, and heard.
 */
 
+$botman->hears('/test', function ($bot) use ($botman) {
+
+    $clientes = \App\Cliente::get();
+
+    foreach($clientes as $cliente)
+    {
+        $para = $cliente->codigo;
+        $msj = 'Mensaje ' . ' para ' . $para;
+
+        $bot->say($msj, $para);
+        // \Log::info($msj);
+    }                            
+});
+
 // Inicio
 //////////////////////////////////////////////////////////////////////////////
 
@@ -28,9 +44,9 @@ $botman->hears('/start', function ($bot) {
     $user = $bot->getUser();
     $id = $user->getId();
     $driver = $bot->getDriver()->getName();
-    $username = $user->getUsername() ?: "desconocido";
-    $firstname = $user->getFirstName() ?: "desconocido";
-    $lastname = $user->getLastName() ?: "desconocido";
+    $username = $user->getUsername() ?: null;
+    $firstname = $user->getFirstName() ?: null;
+    $lastname = $user->getLastName() ?: null;
 
     // Crear o actualizar la información del usuario en sesión
     $cliente = \App\Cliente::firstOrNew(array(
@@ -45,6 +61,8 @@ $botman->hears('/start', function ($bot) {
 
     // Mostrar mensaje de bienvenida
     $bot->reply("Hola $firstname, soy el asistente para la creación de citas.");
+
+    // Log::info($bot->getUser()->getInfo());
 });
 
 // Servicios

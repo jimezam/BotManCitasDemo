@@ -16,15 +16,36 @@ class ServicioAgregarConversacion extends Conversation
      */
     public function run()
     {
-        /*
+        if(!$this->isUserAdmin())
+        {
+            $this->say("Oh oh, lo siento, esta funcionalidad sólo está disponible para el administrador");
+            return;
+        }
+
         $this->saludo();
         $this->preguntarNombre();
+
+        /*
+        $this->say("hola", ["445956852", "600357848"], TelegramDriver::class);
         */
 
-        $this->say("Testing ...");
-        // $this->say("hola", ["445956852", "600357848"], TelegramDriver::class);
-        $this->say("hola", "445956852", TelegramDriver::class);
-        $this->say("hola", "600357848", TelegramDriver::class);
+        /*
+        $this->say("hola 4", "445956852", TelegramDriver::class);
+        $this->say("hola 6", "600357848", TelegramDriver::class);
+        */
+
+        /*
+        $this->say("hola: 44", "jimezam", TelegramDriver::class);
+        $this->say("hola: 60", "JorgeIMeza", TelegramDriver::class);
+        */
+    }
+
+    private function isUserAdmin()
+    {
+        if($this->bot->getUser()->getUsername() == env('ADMIN_LIST'))
+            return true;
+
+        return false;
     }
     
     public function saludo()
@@ -78,9 +99,10 @@ class ServicioAgregarConversacion extends Conversation
 
         foreach($clientes as $cliente)
         {
-            $this->say($mensaje, 
-                        [$cliente->codigo], 
-                        TelegramDriver::class);
+            $para = $cliente->codigo;
+    
+            // $this->say($mensaje, $para);             // Does not work
+            $this->bot->say($mensaje, $para);
         }
     }
 

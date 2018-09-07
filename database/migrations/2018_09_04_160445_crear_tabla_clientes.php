@@ -17,9 +17,9 @@ class CrearTablaClientes extends Migration
             $table->increments('id');
             $table->string('codigo', 20);
             $table->string('driver');
-            $table->string('nombre_usuario', 20);
-            $table->string('nombres', 30);
-            $table->string('apellidos', 30);
+            $table->string('nombre_usuario', 20)->nullable();
+            $table->string('nombres', 30)->nullable();
+            $table->string('apellidos', 30)->nullable();
             $table->timestamps();
         });
     }
